@@ -104,21 +104,21 @@ exports.postOF = ( req, res ) => {
         }
 
         const request = new Request(
-            `INSERT INTO ofabricacionTracking (idPedido, ordFabricacion, fechaInicial, fechaFin, codigoItems, items)
-            VALUES ('${Pedido}', '${OF}', '${StartDate}', '${DueDate}', '${Item}', '${Descripcion}')`,
+            `INSERT INTO ofabricacionTracking (idPedido, ordFabricacion, itemCode, dscriptionItem, startDate, dueDate)
+            VALUES ('${Pedido}', '${OF}', '${Item}', '${Descripcion}', '${StartDate}', '${DueDate}')`,
             ( err, rowCount ) => {
                 if ( err ) {
-                    console.error( 'Error al registrar el pedido:', err.message );
-                    res.status( 500 ).json( { error: 'Algo salió mal al registrar el pedido' } );
+                    console.error( 'Error al registrar la orden de fabricación:', err.message );
+                    res.status( 500 ).json( { error: 'Algo salió mal al registrar la orden de fabricación' } );
                 } else {
                     connection.close(); // Cierra la conexión después de completar la consulta
-                    res.json( { message: 'Pedido registrado exitosamente' } );
+                    res.json( { message: 'Orden de fabricación registrada exitosamente' } );
                 }
             }
         );
 
         connection.execSql( request );
-    });
+    } );
 }
 
 // Controlador para obtener los códigos de items de cada OF
@@ -152,16 +152,16 @@ exports.getItemCodesByOF = ( req, res ) => {
             const of = {};
             columns.forEach( ( column ) => {
                 of[column.metadata.colName] = column.value;
-            });
+            } );
             ofs.push( of );
-        });
+        } );
     
         request.on( 'doneInProc', () => {
             res.json( ofs );
-        });
+        } );
         
         connection.execSql( request );
-    })
+    } )
 }
 
 // Controlador para obtener los items de cada OF
@@ -195,14 +195,14 @@ exports.getDescripcionesByOF = ( req, res ) => {
             const of = {};
             columns.forEach( ( column ) => {
                 of[column.metadata.colName] = column.value;
-            });
+            } );
             ofs.push( of );
-        });
+        } );
     
         request.on( 'doneInProc', () => {
             res.json( ofs );
-        });
+        } );
         
         connection.execSql( request );
-    })
+    } )
 }

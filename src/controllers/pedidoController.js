@@ -20,7 +20,7 @@ exports.getPedidos = ( req, res ) => {
             ( err, rowCount ) => {
                 if ( err ) {
                     console.error( err );
-                    return res.status( 500 ).json({ error: 'Error al obtener pedidos' });
+                    return res.status( 500 ).json( { error: 'Error al obtener pedidos' } );
                 } else {
                     connection.close();
                 }
@@ -33,16 +33,16 @@ exports.getPedidos = ( req, res ) => {
             const pedido = {};
             columns.forEach( ( column ) => {
                 pedido[column.metadata.colName] = column.value;
-            });
+            } );
             pedidos.push( pedido );
-        });
+        } );
     
         request.on( 'doneInProc', () => {
             res.json( pedidos );
-        });
+        } );
         
         connection.execSql( request );
-    })
+    } )
 }
 
 // Controlador para guardar en la BD
@@ -61,7 +61,7 @@ exports.postPedidos = ( req, res ) => {
 
         const request = new Request(
             `INSERT INTO pedidoTracking (idClienteP, nombreClienteP, pedidoCliente, estadoPedido, codigoItems, items, fechaContabilizacion, fechaEntrega)
-            VALUES ('${CardCode}', '${CardName}', '${DocNum}', '${CANCELED}', JSON_ARRAY('${ItemCode.join("', '")}'), JSON_ARRAY('${Dscription.join("', '")}'), '${TaxDate}', '${DocDueDate}')`,
+            VALUES ( '${CardCode}', '${CardName}', '${DocNum}', '${CANCELED}', JSON_ARRAY( '${ItemCode.join("', '")}' ), JSON_ARRAY( '${Dscription.join("', '")}' ), '${TaxDate}', '${DocDueDate}' )`,
             ( err, rowCount ) => {
                 if ( err ) {
                     console.error( 'Error al registrar el pedido:', err.message );
@@ -74,7 +74,7 @@ exports.postPedidos = ( req, res ) => {
         );
 
         connection.execSql( request );
-    });
+    } );
 }
 
 // Controlador para obtener los pedidos de la BD
@@ -93,7 +93,7 @@ exports.getPedidosList = ( req, res ) => {
             ( err, rowCount ) => {
                 if ( err ) {
                     console.error( err );
-                    return res.status( 500 ).json({ error: 'Error al obtener pedidos' });
+                    return res.status( 500 ).json( { error: 'Error al obtener pedidos' } );
                 } else {
                     connection.close();
                 }
@@ -108,14 +108,14 @@ exports.getPedidosList = ( req, res ) => {
                 pedido[column.metadata.colName] = column.value;
             });
             pedidos.push( pedido );
-        });
+        } );
     
         request.on( 'doneInProc', () => {
             res.json( pedidos );
-        });
+        } );
         
         connection.execSql( request );
-    })
+    } )
 }
 
 // Controlador para obtener los ItemCode del SAP para los formularios
@@ -133,7 +133,7 @@ exports.getItemCodesByDocNum = ( req, res ) => {
         }
     
         const request = new Request(
-            `SELECT DISTINCT ItemCode FROM pedidoTrackingSap WHERE DocNum = '${docNum}'`,
+            `SELECT ItemCode FROM pedidoTrackingSap WHERE DocNum = '${docNum}'`,
             ( err, rowCount ) => {
                 if ( err ) {
                     console.error( err );

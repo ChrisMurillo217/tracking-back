@@ -1,7 +1,7 @@
 const express = require( 'express' );
 const router = express.Router();
 
-const connection = require('../../dbConfig');
+const connection = require( '../../dbConfig' );
 
 // Importa los controladores
 // const authenticationController = require( '../controllers/authenticationControllers' );
@@ -24,17 +24,17 @@ router.get( '/pedidos', pedidoController.getPedidos );
 router.post ( '/pedidos', pedidoController.postPedidos );
 
 // Ruta para obtener los ItemCode por DocNum
-router.get('/pedidos/itemcodes/:docNum', pedidoController.getItemCodesByDocNum);
+router.get( '/pedidos/itemcodes/:docNum', pedidoController.getItemCodesByDocNum );
 
 // Ruta para obtener las descripciones por DocNum
-router.get('/pedidos/descripciones/:docNum', pedidoController.getDescripcionesByDocNum);
+router.get( '/pedidos/descripciones/:docNum', pedidoController.getDescripcionesByDocNum );
 
 // Ruta para visualizar los pedidos
 router.get( '/trackinList', pedidoController.getPedidosList );
 
 
 // Ruta para obtener pedidos que tengan una orden de fabricación
-router.get('/fabricacion/with-of', ofController.getPedidosConOFs);
+router.get( '/fabricacion/with-of', ofController.getPedidosConOFs );
 
 // Ruta para visualizar la información de los pedidos
 router.get( '/fabricacion/ofs/:pedido', ofController.getOF );

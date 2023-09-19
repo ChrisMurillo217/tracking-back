@@ -26,8 +26,8 @@ connection.connect(); // Establece la conexión con la BD
 
 app.use( ( err, req, res, next ) => {
     console.error( err.stack );
-    res.status( 500 ).json({ error: 'Something went wrong!' });
-});
+    res.status( 500 ).json( { error: 'Something went wrong!' } );
+} );
   
 
 connection.on( 'connect', function ( err ) {
@@ -40,4 +40,4 @@ connection.on( 'connect', function ( err ) {
     app.use( '/api', routes ); // Agrega las rutas a la aplicación Express
 
     app.listen( port, console.log( `Listening on port ${port}` ) );
-});
+} );
