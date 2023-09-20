@@ -118,6 +118,45 @@ exports.getPedidosList = ( req, res ) => {
     } )
 }
 
+exports.getPedidoByDocNum = ( req, res ) => {
+    const docNum = req.params.docNum;
+  
+    const connection = new Connection( config );
+    connection.connect();
+  
+    connection.on( 'connect', function ( err ) {
+        if ( err ) {
+            console.error( 'Error al conectar a la BD:', err.message );
+            console.log( err );
+            return res.status( 500 ).json( { error: 'Error al obtener el pedido' } );
+        }
+    
+        const request = new Request(
+            `SELECT * FROM pedidoTracking WHERE pedidoCliente = '${docNum}'`,
+            ( err, rowCount ) => {
+                if ( err ) {
+                    console.error( err );
+                    return res.status( 500 ).json( { error: 'Error al obtener el pedido' } );
+                } else {
+                    connection.close();
+                }
+            }
+        );
+    
+        const pedido = {};
+    
+        request.on( 'row', ( columns ) => {
+            pedido.push( columns[0].value );
+        } );
+    
+        request.on( 'doneInProc', () => {
+            res.json( pedido );
+        } );
+    
+        connection.execSql( request );
+    } );
+};
+
 // Controlador para obtener los ItemCode del SAP para los formularios
 exports.getItemCodesByDocNum = ( req, res ) => {
     const docNum = req.params.docNum;

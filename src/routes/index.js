@@ -29,6 +29,10 @@ router.get( '/pedidos/itemcodes/:docNum', pedidoController.getItemCodesByDocNum 
 // Ruta para obtener las descripciones por DocNum
 router.get( '/pedidos/descripciones/:docNum', pedidoController.getDescripcionesByDocNum );
 
+
+// Ruta para visualizar el pedido seleccionado
+router.get( '/trackin/:pedido', pedidoController.getPedidoByDocNum );
+
 // Ruta para visualizar los pedidos
 router.get( '/trackinList', pedidoController.getPedidosList );
 
