@@ -31,10 +31,10 @@ router.get( '/pedidos/descripciones/:docNum', pedidoController.getDescripcionesB
 
 
 // Ruta para visualizar el pedido seleccionado
-router.get( '/trackin/:pedido', pedidoController.getPedidoByDocNum );
+router.get( '/tracking/:pedidoCliente', pedidoController.getPedidoByDocNum );
 
 // Ruta para visualizar los pedidos
-router.get( '/trackinList', pedidoController.getPedidosList );
+router.get( '/trackingList', pedidoController.getPedidosList );
 
 
 // Ruta para obtener pedidos que tengan una orden de fabricación

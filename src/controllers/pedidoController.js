@@ -119,7 +119,7 @@ exports.getPedidosList = ( req, res ) => {
 }
 
 exports.getPedidoByDocNum = ( req, res ) => {
-    const docNum = req.params.docNum;
+    const pedidoCliente = req.params.pedidoCliente;
   
     const connection = new Connection( config );
     connection.connect();
@@ -127,12 +127,11 @@ exports.getPedidoByDocNum = ( req, res ) => {
     connection.on( 'connect', function ( err ) {
         if ( err ) {
             console.error( 'Error al conectar a la BD:', err.message );
-            console.log( err );
             return res.status( 500 ).json( { error: 'Error al obtener el pedido' } );
         }
     
         const request = new Request(
-            `SELECT * FROM pedidoTracking WHERE pedidoCliente = '${docNum}'`,
+            `SELECT * FROM pedidoTracking WHERE pedidoCliente = '${pedidoCliente}'`,
             ( err, rowCount ) => {
                 if ( err ) {
                     console.error( err );
@@ -143,10 +142,14 @@ exports.getPedidoByDocNum = ( req, res ) => {
             }
         );
     
-        const pedido = {};
+        const pedido = [];
     
         request.on( 'row', ( columns ) => {
-            pedido.push( columns[0].value );
+            const pedidoItem = {};
+            columns.forEach( ( column ) => {
+                pedidoItem[column.metadata.colName] = column.value;
+            } );
+            pedido.push( pedidoItem );
         } );
     
         request.on( 'doneInProc', () => {
@@ -195,7 +198,7 @@ exports.getItemCodesByDocNum = ( req, res ) => {
     
         connection.execSql( request );
     } );
-};
+},
 
 // Controlador para obtener los Dscription del SAP para los formularios
 exports.getDescripcionesByDocNum = ( req, res ) => {
