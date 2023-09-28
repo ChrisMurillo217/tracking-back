@@ -9,7 +9,7 @@ const config = require( '../../dbConfig' );
 exports.getGuia = ( req, res ) => {
     const item = req.params.item;
     const pedido = req.params.pedido;
-    
+
     const connection = new Connection( config );
     connection.connect();
 
