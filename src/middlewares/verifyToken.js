@@ -1,7 +1,7 @@
 const jwt = require( 'jsonwebtoken' );
 
 module.exports = ( req, res, next ) => {
-    const token = req.headers['authorization'];
+    const token = req.headers[ 'authorization' ];
 
     if ( token ) {
         jwt.verify( token, 'secret_key', ( err, decoded ) => {
@@ -11,7 +11,7 @@ module.exports = ( req, res, next ) => {
                 req.user = decoded; // Decodifica el token y agrega los datos del usuario al objeto de solicitud (req)
                 next();
             }
-        });
+        } );
     } else {
         res.status( 401 ).json( { error: 'Acceso no autorizado' } );
     }

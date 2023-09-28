@@ -1,12 +1,11 @@
 const express = require( 'express' );
 const router = express.Router();
 
-const connection = require( '../../dbConfig' );
-
 // Importa los controladores
 // const authenticationController = require( '../controllers/authenticationControllers' );
 const pedidoController = require( '../controllers/pedidoController' );
 const ofController = require( '../controllers/ofController' );
+const guiaController = require( '../controllers/guiaController' );
 const protectedController = require( '../controllers/protectedController' );
 
 // Importa los middlewares
@@ -29,6 +28,9 @@ router.get( '/pedidos/itemcodes/:docNum', pedidoController.getItemCodesByDocNum 
 // Ruta para obtener las descripciones por DocNum
 router.get( '/pedidos/descripciones/:docNum', pedidoController.getDescripcionesByDocNum );
 
+// Ruta para obtener los Quantity por ItemCode
+router.get( '/pedidos/cantidades/:itemCode', pedidoController.getCantidadesByItemCode );
+
 
 // Ruta para visualizar el pedido seleccionado
 router.get( '/tracking/:pedidoCliente', pedidoController.getPedidoByDocNum );
@@ -50,6 +52,16 @@ router.get( '/fabricacion/ofs/:OF', ofController.getItemCodesByOF );
 router.get( '/fabricacion/ofs/:OF', ofController.getDescripcionesByOF );
 
 // Ruta para registrar nuevos pedidos
-router.post ( '/fabricacion', ofController.postOF );
+router.post( '/fabricacion', ofController.postOF );
+
+// Ruta para obtener órdenes de fabricación existentes para un pedido
+router.get( '/fabricacion/existing-ofs/:pedido', ofController.getExistingOFsForPedido );
+
+
+// Ruta para visualizar la información de las guias
+router.get( '/guia/ItemCode=:item&Comments=:pedido', guiaController.getGuia );
+
+// Ruta para registrar nuevas guias
+router.post( '/guia', guiaController.postGuia );
 
 module.exports = router;

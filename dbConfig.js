@@ -10,7 +10,8 @@ const config = {
     options: {
         port: 1433,
         database: 'trackingDemo',
-        trustServerCertificate: true
+        trustServerCertificate: true,
+        requestTimeout: 60000
     }
 };
 

@@ -39,5 +39,5 @@ connection.on( 'connect', function ( err ) {
 
     app.use( '/api', routes ); // Agrega las rutas a la aplicación Express
 
-    app.listen( port, console.log( `Listening on port ${port}` ) );
+    app.listen( port, console.log( `Listening on port ${ port }` ) );
 } );

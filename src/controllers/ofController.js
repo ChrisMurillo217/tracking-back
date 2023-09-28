@@ -44,8 +44,9 @@ exports.getPedidosConOFs = ( req, res ) => {
   
       connection.execSql( request );
     } );
-};
+}
 
+// ofTrackingSap
 // Controlador para obtener los pedidos del SAP para los formularios
 exports.getOF = ( req, res ) => {
     const pedido = req.params.pedido;
@@ -89,6 +90,93 @@ exports.getOF = ( req, res ) => {
     } )
 }
 
+// Controlador para obtener los códigos de items de cada OF
+exports.getItemCodesByOF = ( req, res ) => {
+    const of = req.params.of
+
+    const connection = new Connection( config );
+    connection.connect();
+    
+    connection.on( 'connect', function( err ){
+        if ( err ) {
+            console.error( 'Error al conectar a la BD:', err.message );
+            console.log( err );
+            throw err;
+        }
+        const request = new Request(
+            `SELECT DISTINCT Item FROM ofTrackingSap WHERE OF = '${of}'`, 
+            ( err, rowCount ) => {
+                if ( err ) {
+                    console.error( err );
+                    return res.status( 500 ).json({ error: 'Error al obtener códigos de item' });
+                } else {
+                    connection.close();
+                }
+            }
+        );
+        
+        const ofs = [];
+
+        request.on( 'row', ( columns ) => {
+            const of = {};
+            columns.forEach( ( column ) => {
+                of[column.metadata.colName] = column.value;
+            } );
+            ofs.push( of );
+        } );
+        
+        request.on( 'doneInProc', () => {
+            res.json( ofs );
+        } );
+        
+        connection.execSql( request );
+    } )
+}
+
+// Controlador para obtener los items de cada OF
+exports.getDescripcionesByOF = ( req, res ) => {
+    const of = req.params.of
+    
+    const connection = new Connection( config );
+    connection.connect();
+    
+    connection.on( 'connect', function( err ){
+        if ( err ) {
+            console.error( 'Error al conectar a la BD:', err.message );
+            console.log( err );
+            throw err;
+        }
+        const request = new Request(
+            `SELECT DISTINCT Descripcion FROM ofTrackingSap WHERE OF = '${of}'`, 
+            ( err, rowCount ) => {
+                if ( err ) {
+                    console.error( err );
+                    return res.status( 500 ).json({ error: 'Error al obtener las descripciones' });
+                } else {
+                    connection.close();
+                }
+            }
+        );
+            
+        const ofs = [];
+        
+        request.on( 'row', ( columns ) => {
+            const of = {};
+            columns.forEach( ( column ) => {
+                of[column.metadata.colName] = column.value;
+            } );
+            ofs.push( of );
+        } );
+        
+        request.on( 'doneInProc', () => {
+            res.json( ofs );
+        } );
+        
+        connection.execSql( request );
+    } )
+}
+   
+// ofabricacionTracking
 // Controlador para guardar en la BD
 exports.postOF = ( req, res ) => {
     const { Pedido, OF, StartDate, DueDate, Item, Descripcion } = req.body;
@@ -121,88 +209,41 @@ exports.postOF = ( req, res ) => {
     } );
 }
 
-// Controlador para obtener los códigos de items de cada OF
-exports.getItemCodesByOF = ( req, res ) => {
-    const of = req.params.of
-
+// Controlador para obtener las órdenes de fabricación existentes para un pedido
+exports.getExistingOFsForPedido = ( req, res ) => {
+    const pedido = req.params.pedido;
+  
     const connection = new Connection( config );
     connection.connect();
     
-    connection.on( 'connect', function( err ){
+    connection.on( 'connect', function ( err ) {
         if ( err ) {
             console.error( 'Error al conectar a la BD:', err.message );
-            console.log( err );
-            throw err;
+            return res.status( 500 ).json( { error: 'Error al obtener órdenes de fabricación existentes' } );
         }
+        
         const request = new Request(
-            `SELECT DISTINCT Item FROM ofTrackingSap WHERE OF = '${of}'`, 
+            `SELECT DISTINCT ordFabricacion FROM ofabricacionTracking WHERE idPedido = '${pedido}'`,
             ( err, rowCount ) => {
                 if ( err ) {
                     console.error( err );
-                    return res.status( 500 ).json({ error: 'Error al obtener códigos de item' });
+                    return res.status( 500 ).json( { error: 'Error al obtener órdenes de fabricación existentes' } );
                 } else {
                     connection.close();
                 }
             }
-        );
-
-        const ofs = [];
-
-        request.on( 'row', ( columns ) => {
-            const of = {};
-            columns.forEach( ( column ) => {
-                of[column.metadata.colName] = column.value;
-            } );
-            ofs.push( of );
-        } );
+            );
+            
+            const existingOFs = [];
     
-        request.on( 'doneInProc', () => {
-            res.json( ofs );
+        request.on( 'row', ( columns ) => {
+            existingOFs.push( columns[0].value );
         } );
         
-        connection.execSql( request );
-    } )
-}
-
-// Controlador para obtener los items de cada OF
-exports.getDescripcionesByOF = ( req, res ) => {
-    const of = req.params.of
-
-    const connection = new Connection( config );
-    connection.connect();
-    
-    connection.on( 'connect', function( err ){
-        if ( err ) {
-            console.error( 'Error al conectar a la BD:', err.message );
-            console.log( err );
-            throw err;
-        }
-        const request = new Request(
-            `SELECT DISTINCT Descripcion FROM ofTrackingSap WHERE OF = '${of}'`, 
-            ( err, rowCount ) => {
-                if ( err ) {
-                    console.error( err );
-                    return res.status( 500 ).json({ error: 'Error al obtener las descripciones' });
-                } else {
-                    connection.close();
-                }
-            }
-        );
-
-        const ofs = [];
-
-        request.on( 'row', ( columns ) => {
-            const of = {};
-            columns.forEach( ( column ) => {
-                of[column.metadata.colName] = column.value;
-            } );
-            ofs.push( of );
-        } );
-    
         request.on( 'doneInProc', () => {
-            res.json( ofs );
+            res.json( existingOFs );
         } );
-        
+    
         connection.execSql( request );
-    } )
-}
+    } );
+};
